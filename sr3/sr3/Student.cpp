@@ -49,17 +49,17 @@ std::string Student::getInfo() const {
 }
 
 std::string Student::getLiveGreeting() const {
-    // firstName_ має private-доступ, тому нащадок використовує public-геттер.
+    
     return "Привіт, " + getFirstName() + "!";
 }
 
 std::string Student::getListFormat() const {
-    // lastName_ має protected-доступ, тому Student може читати його напряму.
+    
     return lastName_ + " " + getFirstName();
 }
 
 std::string Student::getAdultStatus() const {
-    // Прямий виклик protected-методу Person::isAdult() у нащадку.
+    
     if (isAdult()) {
         return getFirstName() + " є повнолітнім студентом (" + std::to_string(age_) + " років).";
     }

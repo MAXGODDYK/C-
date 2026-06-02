@@ -8,14 +8,12 @@ private:
     std::string midName_;
 
 protected:
-    // Спільні поля для студентів і співробітників коледжу.
-    // protected дозволяє нащадкам повторно використовувати ці дані,
-    // але не відкриває їх напряму для main() та іншого зовнішнього коду.
+    
     std::string lastName_;
     std::string gender_;
     int age_;
 
-    // Варіант А: захищений помічник для нащадків.
+    
     bool isAdult() const;
 
 public:

@@ -22,13 +22,13 @@ std::string Teacher::getInfo() const {
 }
 
 std::string Teacher::getFormalGreeting() const {
-    // gender_ і lastName_ protected, тому Teacher може використати їх напряму.
+    
     const std::string appeal = (gender_ == "Жіноча") ? "Шановна пані " : "Шановний пане ";
     return appeal + lastName_ + "!";
 }
 
 std::string Teacher::getAdultStatus() const {
-    // Прямий виклик protected-методу Person::isAdult() у нащадку.
+    
     if (isAdult()) {
         return "Викладач " + lastName_ + " має повний доступ до дорослих обов'язків.";
     }

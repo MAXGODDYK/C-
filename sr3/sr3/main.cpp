@@ -54,24 +54,7 @@ int main() {
     cout << staff.getBadgeText() << endl;
     cout << staff.getAdultStatus() << endl;
 
-    // Доказ доступу:
-    // cout << student.lastName_ << endl;
-    // Помилка компіляції: lastName_ є protected.
-    // Protected краще за public для успадкування, бо нащадки можуть повторно
-    // використовувати спільні поля Person, але main() не може напряму ламати
-    // інкапсуляцію або залежати від внутрішньої будови класу.
-    //
-    // cout << student.isAdult() << endl;
-    // Помилка компіляції: isAdult() є protected.
-    // Цей метод краще зробити protected, а не public, бо це внутрішній
-    // допоміжний метод для Student, Teacher і Staff. Зовнішній код повинен
-    // отримувати готові повідомлення через public-методи getAdultStatus().
-    //
-    // cout << student.firstName_ << endl;
-    // Помилка компіляції: firstName_ є private.
-    // Private відрізняється від protected тим, що private видно тільки
-    // всередині Person. Навіть Student, Teacher і Staff не можуть читати
-    // firstName_ напряму, тому використовують public-геттер getFirstName().
+    
 
     return 0;
 }
