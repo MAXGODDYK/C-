@@ -17,7 +17,17 @@ public:
         std::string position,
         std::string shift);
 
-    std::string getInfo() const override;
-    std::string getBadgeText() const;
+    std::string getPosition() const;
+    std::string getShift()    const;
+
+    bool setPosition(const std::string& pos);
+    bool setShift(const std::string& shift);
+
+    std::string getInfo()           const override;
+    std::string getFormalGreeting() const override;
+
+    std::string getBadgeText()   const;
     std::string getAdultStatus() const;
+
+    ~Staff() override;
 };

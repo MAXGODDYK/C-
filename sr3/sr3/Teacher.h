@@ -17,7 +17,15 @@ public:
         std::string subject,
         std::string academicTitle);
 
-    std::string getInfo() const override;
-    std::string getFormalGreeting() const;
+    std::string getSubject()       const;
+    std::string getAcademicTitle() const;
+
+    bool setSubject(const std::string& subj);
+
+    std::string getInfo()           const override;
+    std::string getFormalGreeting() const override;
+
     std::string getAdultStatus() const;
+
+    ~Teacher() override;
 };

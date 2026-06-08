@@ -19,17 +19,21 @@ public:
         std::string homePets,
         std::string sport);
 
-    std::string getGroup() const;
-    void setGroup(const std::string& group);
-
+    std::string getGroup()    const;
     std::string getHomePets() const;
-    void setHomePets(const std::string& homePets);
+    std::string getSport()    const;
 
-    std::string getSport() const;
-    void setSport(const std::string& sport);
+    // повертають false якщо дані не пройшли валідацію
+    bool setGroup(const std::string& grp);
+    bool setHomePets(const std::string& homePets);
+    bool setSport(const std::string& sport);
 
-    std::string getInfo() const override;
+    std::string getInfo()           const override;
+    std::string getFormalGreeting() const override;
+
     std::string getLiveGreeting() const;
-    std::string getListFormat() const;
-    std::string getAdultStatus() const;
+    std::string getListFormat()   const;
+    std::string getAdultStatus()  const;
+
+    ~Student() override;
 };

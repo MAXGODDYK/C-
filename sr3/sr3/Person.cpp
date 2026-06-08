@@ -1,5 +1,6 @@
 #include "Person.h"
 
+#include <iostream>
 #include <utility>
 
 Person::Person(std::string fn, std::string mn, std::string ln, std::string g, int a)
@@ -10,32 +11,24 @@ Person::Person(std::string fn, std::string mn, std::string ln, std::string g, in
       age_(a) {
 }
 
+Person::~Person() {
+    std::cout << "[~Person] " << lastName_ << " видалено." << std::endl;
+}
+
 bool Person::isAdult() const {
     return age_ >= 18;
 }
 
-std::string Person::getFirstName() const {
-    return firstName_;
-}
+std::string Person::getFirstName() const { return firstName_; }
+std::string Person::getMidName()   const { return midName_; }
+std::string Person::getLastName()  const { return lastName_; }
+std::string Person::getGender()    const { return gender_; }
+int         Person::getAge()       const { return age_; }
 
-std::string Person::getMidName() const {
-    return midName_;
-}
-
-std::string Person::getLastName() const {
-    return lastName_;
-}
-
-std::string Person::getGender() const {
-    return gender_;
-}
-
-int Person::getAge() const {
-    return age_;
-}
-
-std::string Person::getInfo() const {
-    return "ПІБ: " + lastName_ + " " + firstName_ + " " + midName_
-        + ", стать: " + gender_
-        + ", вік: " + std::to_string(age_);
+bool Person::setAge(int a) {
+    if (a >= 16 && a <= 100) {
+        age_ = a;
+        return true;
+    }
+    return false;
 }
