@@ -270,7 +270,7 @@ namespace Portfolio {
             lstStudents->Items->Clear();
             for (size_t i = 0; i < students_->size(); ++i) {
                 Student* s = (*students_)[i];
-                String^ info = Utf8ToString(s->getInfo());
+                String^ info = gcnew String(s->getInfo().c_str());
                 if (String::IsNullOrWhiteSpace(query) || info->IndexOf(query, StringComparison::OrdinalIgnoreCase) >= 0) {
                     lstStudents->Items->Add(info);
                 }
@@ -289,7 +289,7 @@ namespace Portfolio {
 
                 System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(dlg->FileName, false, System::Text::Encoding::UTF8);
                 for (Student* s : *students_) {
-                    sw->WriteLine(Utf8ToString(s->getInfo()));
+                    sw->WriteLine(gcnew String(s->getInfo().c_str()));
                 }
                 sw->Close();
                 lblResult->Text = L"Експорт завершено.";
@@ -321,7 +321,7 @@ namespace Portfolio {
             Student* s = MakeStudentFromInputs(age);
             students_->push_back(s);                                  // оновлюємо vector
 
-            String^ info = Utf8ToString(s->getInfo());
+            String^ info = gcnew String(s->getInfo().c_str());
             lstStudents->Items->Add(info);
             lstStudents->SelectedIndex = lstStudents->Items->Count - 1;
             lblResult->Text = L"Додано: " + info;
@@ -340,14 +340,14 @@ namespace Portfolio {
 
             // ЗАВДАННЯ 1: передаємо поточні дані у конструктор діалогу
             StudentEditForm^ dlg = gcnew StudentEditForm(
-                Utf8ToString(cur->getFirstName()),
-                Utf8ToString(cur->getMidName()),
-                Utf8ToString(cur->getLastName()),
-                Utf8ToString(cur->getGender()),
+                gcnew String(cur->getFirstName().c_str()),
+                gcnew String(cur->getMidName().c_str()),
+                gcnew String(cur->getLastName().c_str()),
+                gcnew String(cur->getGender().c_str()),
                 cur->getAge(),
-                Utf8ToString(cur->getGroup()),
-                Utf8ToString(cur->getHomePets()),
-                Utf8ToString(cur->getSport()));
+                gcnew String(cur->getGroup().c_str()),
+                gcnew String(cur->getHomePets().c_str()),
+                gcnew String(cur->getSport().c_str()));
 
             // ЗАВДАННЯ 2: ShowDialog() + перевірка DialogResult
             if (dlg->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
@@ -366,7 +366,7 @@ namespace Portfolio {
                 delete (*students_)[idx];
                 (*students_)[idx] = updated;
 
-                String^ info = Utf8ToString(updated->getInfo());
+                String^ info = gcnew String(updated->getInfo().c_str());
                 lstStudents->Items[idx] = info;                       // оновлюємо рядок списку
                 lstStudents->SelectedIndex = idx;
                 lblResult->Text = L"Відредаговано: " + info;
