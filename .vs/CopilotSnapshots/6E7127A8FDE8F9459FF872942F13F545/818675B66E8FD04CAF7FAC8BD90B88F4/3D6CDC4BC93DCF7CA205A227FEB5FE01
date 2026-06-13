@@ -278,7 +278,7 @@ namespace Portfolio {
                 System::Windows::Forms::SaveFileDialog^ dlg = gcnew System::Windows::Forms::SaveFileDialog();
                 dlg->Filter = L"Text files (*.txt)|*.txt|All files (*.*)|*.*";
                 dlg->FileName = L"students.txt";
-                if (dlg->ShowDialog(this) != System::Windows::Forms::DialogResult::OK) { return; }
+                if (dlg->ShowDialog(this) != DialogResult::OK) { return; }
 
                 System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(dlg->FileName, false, System::Text::Encoding::UTF8);
                 for (Student* s : *students_) {

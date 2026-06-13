@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainForm.h" />
+    <ClInclude Include="StatisticsForm.h" />
     <ClInclude Include="StudentEditForm.h" />
     <ClInclude Include="Person.h" />
     <ClInclude Include="Staff.h" />

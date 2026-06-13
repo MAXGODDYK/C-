@@ -10,7 +10,6 @@
 
 #include "Student.h"                   // нативний клас з Теми 1-4
 #include "StudentEditForm.h"           // діалог редагування (Тема 6)
-#include "StatisticsForm.h"            // діалог статистики (Тема 6)
 
 namespace Portfolio {
 
@@ -96,14 +95,9 @@ namespace Portfolio {
 
         Button^  btnCreate;
         Button^  btnEdit;
-        Button^  btnDelete;
         Button^  btnClear;
-        Button^  btnExport;
-        Button^  btnStats;
         Label^   lblResult;
         Label^   lblStudentsCaption;
-        TextBox^ txtSearch;
-        Button^  btnSearch;
         ListBox^ lstStudents;
 
         Label^ MakeLabel(String^ text, int x, int y) {
@@ -156,15 +150,9 @@ namespace Portfolio {
             btnEdit->Size = System::Drawing::Size(BW, 30);
             btnEdit->Click += gcnew EventHandler(this, &MainForm::btnEdit_Click);
 
-            btnDelete = gcnew Button();
-            btnDelete->Text = L"Видалити";
-            btnDelete->Location = Point(FX + 2 * (BW + 10), y);
-            btnDelete->Size = System::Drawing::Size(BW, 30);
-            btnDelete->Click += gcnew EventHandler(this, &MainForm::btnDelete_Click);
-
             btnClear = gcnew Button();
             btnClear->Text = L"Очистити";
-            btnClear->Location = Point(FX + 3 * (BW + 10), y);
+            btnClear->Location = Point(FX + 2 * (BW + 10), y);
             btnClear->Size = System::Drawing::Size(BW, 30);
             btnClear->Click += gcnew EventHandler(this, &MainForm::btnClear_Click);
             y += 42;
@@ -176,16 +164,6 @@ namespace Portfolio {
             lblResult->TextAlign = ContentAlignment::MiddleLeft;
             y += 54;
 
-            // Search box
-            txtSearch = MakeBox(LX, y, FW - 140);
-            txtSearch->Location = Point(LX, y);
-            btnSearch = gcnew Button();
-            btnSearch->Text = L"Пошук";
-            btnSearch->Location = Point(LX + FW - 120, y);
-            btnSearch->Size = System::Drawing::Size(120, 23);
-            btnSearch->Click += gcnew EventHandler(this, &MainForm::btnSearch_Click);
-            y += 36;
-
             lblStudentsCaption = MakeLabel(L"Студенти (оберіть і натисніть «Редагувати»):", LX, y);
             y += 26;
             lstStudents = gcnew ListBox();
@@ -194,21 +172,8 @@ namespace Portfolio {
             lstStudents->DoubleClick += gcnew EventHandler(this, &MainForm::btnEdit_Click); // подвійний клік = редагувати
             y += 140;
 
-            // Bottom controls: Export and Statistics
-            btnExport = gcnew Button();
-            btnExport->Text = L"Експорт TXT";
-            btnExport->Location = Point(FX, y);
-            btnExport->Size = System::Drawing::Size(120, 30);
-            btnExport->Click += gcnew EventHandler(this, &MainForm::btnExport_Click);
-
-            btnStats = gcnew Button();
-            btnStats->Text = L"Статистика";
-            btnStats->Location = Point(FX + 130, y);
-            btnStats->Size = System::Drawing::Size(120, 30);
-            btnStats->Click += gcnew EventHandler(this, &MainForm::btnStats_Click);
-
             this->Text = L"StudentPortfolio — Тема 6 (Взаємодія форм)";
-            this->ClientSize = System::Drawing::Size(FX + FW + 15, y + 50);
+            this->ClientSize = System::Drawing::Size(FX + FW + 15, y);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
             this->MaximizeBox = false;
             this->StartPosition = FormStartPosition::CenterScreen;
@@ -217,8 +182,7 @@ namespace Portfolio {
                 lblFirst, txtFirst, lblMid, txtMid, lblLast, txtLast,
                 lblGender, cbGender, lblAge, txtAge, lblGroup, txtGroup,
                 lblPets, txtPets, lblSport, txtSport,
-                btnCreate, btnEdit, btnDelete, btnClear, lblResult,
-                txtSearch, btnSearch, lblStudentsCaption, lstStudents, btnExport, btnStats
+                btnCreate, btnEdit, btnClear, lblResult, lblStudentsCaption, lstStudents
             };
             this->Controls->AddRange(controls);
 
@@ -236,74 +200,6 @@ namespace Portfolio {
             txtPets->Text  = L"кіт Барсик";
             txtSport->Text = L"футбол";
             lblResult->Text = L"Заповніть поля та натисніть «Додати».";
-        }
-
-        // DELETE: remove selected student from vector and list
-        System::Void btnDelete_Click(Object^ sender, EventArgs^ e) {
-            int idx = lstStudents->SelectedIndex;
-            if (idx < 0) {
-                MessageBox::Show(L"Оберіть студента у списку.", L"Видалити",
-                    MessageBoxButtons::OK, MessageBoxIcon::Information);
-                return;
-            }
-            auto confirm = MessageBox::Show(L"Видалити вибраного студента?", L"Підтвердження",
-                MessageBoxButtons::YesNo, MessageBoxIcon::Question);
-            if (confirm != System::Windows::Forms::DialogResult::Yes) { return; }
-
-            delete (*students_)[idx];
-            students_->erase(students_->begin() + idx);
-            lstStudents->Items->RemoveAt(idx);
-            lblResult->Text = L"Студента видалено.";
-        }
-
-        // SEARCH: filter list by full name substring
-        System::Void btnSearch_Click(Object^ sender, EventArgs^ e) {
-            String^ query = txtSearch->Text->Trim();
-            lstStudents->BeginUpdate();
-            lstStudents->Items->Clear();
-            for (size_t i = 0; i < students_->size(); ++i) {
-                Student* s = (*students_)[i];
-                String^ info = gcnew String(s->getInfo().c_str());
-                if (String::IsNullOrWhiteSpace(query) || info->IndexOf(query, StringComparison::OrdinalIgnoreCase) >= 0) {
-                    lstStudents->Items->Add(info);
-                }
-            }
-            lstStudents->EndUpdate();
-            lblResult->Text = L"Пошук виконано.";
-        }
-
-        // EXPORT: save current list to TXT
-        System::Void btnExport_Click(Object^ sender, EventArgs^ e) {
-            try {
-                System::Windows::Forms::SaveFileDialog^ dlg = gcnew System::Windows::Forms::SaveFileDialog();
-                dlg->Filter = L"Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                dlg->FileName = L"students.txt";
-                if (dlg->ShowDialog(this) != System::Windows::Forms::DialogResult::OK) { return; }
-
-                System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(dlg->FileName, false, System::Text::Encoding::UTF8);
-                for (Student* s : *students_) {
-                    sw->WriteLine(gcnew String(s->getInfo().c_str()));
-                }
-                sw->Close();
-                lblResult->Text = L"Експорт завершено.";
-            }
-            catch (Exception^ ex) {
-                MessageBox::Show(ex->Message, L"Помилка експорту", MessageBoxButtons::OK, MessageBoxIcon::Error);
-            }
-        }
-
-        // STATS: compute simple stats and show StatisticsForm
-        System::Void btnStats_Click(Object^ sender, EventArgs^ e) {
-            int total = (int)students_->size();
-            int students = total; // no differentiation here
-            double avgAge = 0.0;
-            if (total > 0) {
-                int sum = 0;
-                for (Student* s : *students_) { sum += s->getAge(); }
-                avgAge = (double)sum / total;
-            }
-            StatisticsForm^ sf = gcnew StatisticsForm(total, students, avgAge);
-            sf->ShowDialog(this);
         }
 
         // ДОДАТИ: створити Student з полів і додати у vector + список
