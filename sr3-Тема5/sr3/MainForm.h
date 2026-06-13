@@ -1,13 +1,15 @@
 ﻿#pragma once
 
-// ТЕМА 5. C++/CLI + Windows Forms — UI-шар (керований).
-// Бізнес-логіка (Student) лишається нативною (Тема 1-4).
-// Правило: UI = керований (gcnew, ^), дані = нативні (new/delete).
+// ТЕМА 6. Взаємодія форм. Головна форма тримає список студентів
+// (vector<Student*>), діалог StudentEditForm редагує обраного студента.
+// UI = керований (gcnew, ^), бізнес-логіка Student = нативна (new/delete).
 
 #include <string>
-#include <msclr/marshal_cppstd.h>   // marshal_as<std::string>
+#include <vector>
+#include <msclr/marshal_cppstd.h>      // marshal_as<std::string>
 
-#include "Student.h"                // нативний клас з Теми 1-4
+#include "Student.h"                   // нативний клас з Теми 1-4
+#include "StudentEditForm.h"           // діалог редагування (Тема 6)
 
 namespace Portfolio {
 
@@ -20,29 +22,66 @@ namespace Portfolio {
     public ref class MainForm : public Form {
     public:
         MainForm() {
+            students_ = new std::vector<Student*>();   // нативний список
             InitializeComponent();
-            currentStudent_ = nullptr;   // нативний об'єкт ще не створено
-            LoadDefaults();              // мої реальні дані за замовчуванням
+            LoadDefaults();
         }
 
     protected:
-        // деструктор (Dispose) — звільняє керовані контроли + нативний об'єкт
         ~MainForm() {
             if (components) { delete components; }
             CleanupNative();
         }
-        // фіналізатор — страхує від витоку, якщо Dispose не викликали
         !MainForm() { CleanupNative(); }
 
     private:
-        // --- нативна частина (керується вручну через new/delete) ---
-        Student* currentStudent_;
+        // --- нативна частина (керується вручну) ---
+        std::vector<Student*>* students_;   // ref class не може містити vector за значенням -> покажчик
 
         void CleanupNative() {
-            if (currentStudent_) { delete currentStudent_; currentStudent_ = nullptr; }
+            if (students_) {
+                for (Student* s : *students_) { delete s; }
+                delete students_;
+                students_ = nullptr;
+            }
         }
 
-        // --- керовані контроли (.NET, прибирає GC) ---
+        // марш. String^ полів вводу -> новий Student* (спільне для Додати/Редагувати)
+        Student* MakeStudentFromInputs(int age) {
+            std::string f  = marshal_as<std::string>(txtFirst->Text->Trim());
+            std::string m  = marshal_as<std::string>(txtMid->Text->Trim());
+            std::string l  = marshal_as<std::string>(txtLast->Text->Trim());
+            std::string g  = marshal_as<std::string>(cbGender->Text);
+            std::string gr = marshal_as<std::string>(txtGroup->Text->Trim());
+            std::string pet= marshal_as<std::string>(txtPets->Text->Trim());
+            std::string sp = marshal_as<std::string>(txtSport->Text->Trim());
+            return new Student(f, m, l, g, age, gr, pet, sp);
+        }
+
+        // валідація полів вводу; повертає false і показує MessageBox при помилці
+        bool ValidateInputs(int% age) {
+            if (String::IsNullOrWhiteSpace(txtFirst->Text) ||
+                String::IsNullOrWhiteSpace(txtLast->Text)) {
+                MessageBox::Show(L"Введіть ім'я та прізвище.", L"Помилка вводу",
+                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
+                return false;
+            }
+            if (cbGender->SelectedIndex < 0) {
+                MessageBox::Show(L"Оберіть стать зі списку.", L"Помилка вводу",
+                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
+                return false;
+            }
+            int a = 0;
+            if (!Int32::TryParse(txtAge->Text, a) || a < 16 || a > 100) {
+                MessageBox::Show(L"Вік має бути цілим числом від 16 до 100.", L"Помилка вводу",
+                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
+                return false;
+            }
+            age = a;
+            return true;
+        }
+
+        // --- керовані контроли ---
         System::ComponentModel::Container^ components;
 
         Label^   lblFirst;  TextBox^  txtFirst;
@@ -55,23 +94,20 @@ namespace Portfolio {
         Label^   lblSport;  TextBox^  txtSport;
 
         Button^  btnCreate;
+        Button^  btnEdit;
         Button^  btnClear;
         Label^   lblResult;
-        Label^   lblHistoryCaption;
-        ListBox^ lstHistory;
+        Label^   lblStudentsCaption;
+        ListBox^ lstStudents;
 
-        // ---- хелпери, щоб не дублювати створення контролів ----
         Label^ MakeLabel(String^ text, int x, int y) {
             Label^ l = gcnew Label();
-            l->Text = text;
-            l->Location = Point(x, y + 3);
-            l->AutoSize = true;
+            l->Text = text; l->Location = Point(x, y + 3); l->AutoSize = true;
             return l;
         }
         TextBox^ MakeBox(int x, int y, int w) {
             TextBox^ t = gcnew TextBox();
-            t->Location = Point(x, y);
-            t->Size = System::Drawing::Size(w, 23);
+            t->Location = Point(x, y); t->Size = System::Drawing::Size(w, 23);
             return t;
         }
 
@@ -79,46 +115,48 @@ namespace Portfolio {
             components = nullptr;
             this->SuspendLayout();
 
-            const int LX = 15;    // x міток
-            const int FX = 150;   // x полів вводу
-            const int FW = 380;   // ширина полів
-            const int RH = 33;    // крок між рядками
+            const int LX = 15, FX = 150, FW = 380, RH = 33;
             int y = 15;
 
-            lblFirst  = MakeLabel(L"Ім'я:",        LX, y); txtFirst  = MakeBox(FX, y, FW); y += RH;
-            lblMid    = MakeLabel(L"По батькові:",  LX, y); txtMid    = MakeBox(FX, y, FW); y += RH;
-            lblLast   = MakeLabel(L"Прізвище:",     LX, y); txtLast   = MakeBox(FX, y, FW); y += RH;
+            lblFirst  = MakeLabel(L"Ім'я:",        LX, y); txtFirst = MakeBox(FX, y, FW); y += RH;
+            lblMid    = MakeLabel(L"По батькові:",  LX, y); txtMid   = MakeBox(FX, y, FW); y += RH;
+            lblLast   = MakeLabel(L"Прізвище:",     LX, y); txtLast  = MakeBox(FX, y, FW); y += RH;
 
             lblGender = MakeLabel(L"Стать:", LX, y);
             cbGender  = gcnew ComboBox();
             cbGender->Location = Point(FX, y);
             cbGender->Size = System::Drawing::Size(FW, 23);
-            cbGender->DropDownStyle = ComboBoxStyle::DropDownList;  // тільки вибір зі списку
+            cbGender->DropDownStyle = ComboBoxStyle::DropDownList;
             cbGender->Items->Add(L"Чоловіча");
             cbGender->Items->Add(L"Жіноча");
             y += RH;
 
-            lblAge   = MakeLabel(L"Вік:",         LX, y); txtAge   = MakeBox(FX, y, FW); y += RH;
-            lblGroup = MakeLabel(L"Група:",       LX, y); txtGroup = MakeBox(FX, y, FW); y += RH;
-            lblPets  = MakeLabel(L"Улюбленці:",   LX, y); txtPets  = MakeBox(FX, y, FW); y += RH;
-            lblSport = MakeLabel(L"Спорт:",       LX, y); txtSport = MakeBox(FX, y, FW); y += RH;
+            lblAge   = MakeLabel(L"Вік:",       LX, y); txtAge   = MakeBox(FX, y, FW); y += RH;
+            lblGroup = MakeLabel(L"Група:",     LX, y); txtGroup = MakeBox(FX, y, FW); y += RH;
+            lblPets  = MakeLabel(L"Улюбленці:", LX, y); txtPets  = MakeBox(FX, y, FW); y += RH;
+            lblSport = MakeLabel(L"Спорт:",     LX, y); txtSport = MakeBox(FX, y, FW); y += RH;
 
-            // --- кнопки ---
+            // --- три кнопки в один ряд ---
+            const int BW = 120;
             btnCreate = gcnew Button();
-            btnCreate->Text = L"Створити студента";
+            btnCreate->Text = L"Додати";
             btnCreate->Location = Point(FX, y);
-            btnCreate->Size = System::Drawing::Size(185, 30);
-            // ЗАВДАННЯ 1 (самостійна): підписка на подію Click
+            btnCreate->Size = System::Drawing::Size(BW, 30);
             btnCreate->Click += gcnew EventHandler(this, &MainForm::btnCreate_Click);
 
-            btnClear = gcnew Button();           // варіант Б — скидання форми
-            btnClear->Text = L"Очистити";
-            btnClear->Location = Point(FX + 195, y);
-            btnClear->Size = System::Drawing::Size(185, 30);
-            btnClear->Click += gcnew EventHandler(this, &MainForm::btnClear_Click);
-            y += 45;
+            btnEdit = gcnew Button();
+            btnEdit->Text = L"Редагувати";
+            btnEdit->Location = Point(FX + BW + 10, y);
+            btnEdit->Size = System::Drawing::Size(BW, 30);
+            btnEdit->Click += gcnew EventHandler(this, &MainForm::btnEdit_Click);
 
-            // --- результат (getInfo нативного об'єкта) ---
+            btnClear = gcnew Button();
+            btnClear->Text = L"Очистити";
+            btnClear->Location = Point(FX + 2 * (BW + 10), y);
+            btnClear->Size = System::Drawing::Size(BW, 30);
+            btnClear->Click += gcnew EventHandler(this, &MainForm::btnClear_Click);
+            y += 42;
+
             lblResult = gcnew Label();
             lblResult->Location = Point(LX, y);
             lblResult->Size = System::Drawing::Size(FX + FW - LX, 44);
@@ -126,16 +164,15 @@ namespace Portfolio {
             lblResult->TextAlign = ContentAlignment::MiddleLeft;
             y += 54;
 
-            // --- варіант А: історія створення ---
-            lblHistoryCaption = MakeLabel(L"Історія створення:", LX, y);
+            lblStudentsCaption = MakeLabel(L"Студенти (оберіть і натисніть «Редагувати»):", LX, y);
             y += 26;
-            lstHistory = gcnew ListBox();
-            lstHistory->Location = Point(LX, y);
-            lstHistory->Size = System::Drawing::Size(FX + FW - LX, 120);
-            y += 130;
+            lstStudents = gcnew ListBox();
+            lstStudents->Location = Point(LX, y);
+            lstStudents->Size = System::Drawing::Size(FX + FW - LX, 130);
+            lstStudents->DoubleClick += gcnew EventHandler(this, &MainForm::btnEdit_Click); // подвійний клік = редагувати
+            y += 140;
 
-            // --- сама форма ---
-            this->Text = L"StudentPortfolio — Тема 5 (C++/CLI + WinForms)";
+            this->Text = L"StudentPortfolio — Тема 6 (Взаємодія форм)";
             this->ClientSize = System::Drawing::Size(FX + FW + 15, y);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
             this->MaximizeBox = false;
@@ -145,7 +182,7 @@ namespace Portfolio {
                 lblFirst, txtFirst, lblMid, txtMid, lblLast, txtLast,
                 lblGender, cbGender, lblAge, txtAge, lblGroup, txtGroup,
                 lblPets, txtPets, lblSport, txtSport,
-                btnCreate, btnClear, lblResult, lblHistoryCaption, lstHistory
+                btnCreate, btnEdit, btnClear, lblResult, lblStudentsCaption, lstStudents
             };
             this->Controls->AddRange(controls);
 
@@ -153,7 +190,6 @@ namespace Portfolio {
             this->PerformLayout();
         }
 
-        // мої реальні дані як значення за замовчуванням
         void LoadDefaults() {
             txtFirst->Text = L"Максим";
             txtMid->Text   = L"Олексійович";
@@ -163,63 +199,78 @@ namespace Portfolio {
             txtGroup->Text = L"ПІ-21";
             txtPets->Text  = L"кіт Барсик";
             txtSport->Text = L"футбол";
-            lblResult->Text = L"Готово. Заповніть поля та натисніть «Створити студента».";
+            lblResult->Text = L"Заповніть поля та натисніть «Додати».";
         }
 
-        // ЗАВДАННЯ 2-4 (самостійна) + валідація (домашнє): обробник Click
+        // ДОДАТИ: створити Student з полів і додати у vector + список
         System::Void btnCreate_Click(Object^ sender, EventArgs^ e) {
-            // --- ВАЛІДАЦІЯ на межі (ДО створення нативного об'єкта) ---
-            // 1) ім'я та прізвище не порожні
-            if (String::IsNullOrWhiteSpace(txtFirst->Text) ||
-                String::IsNullOrWhiteSpace(txtLast->Text)) {
-                MessageBox::Show(L"Введіть ім'я та прізвище.", L"Помилка вводу",
-                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
-                return;
-            }
-            // 2) стать обрана
-            if (cbGender->SelectedIndex < 0) {
-                MessageBox::Show(L"Оберіть стать зі списку.", L"Помилка вводу",
-                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
-                return;
-            }
-            // 3) вік — ціле число у діапазоні 16..100
             int age = 0;
-            if (!Int32::TryParse(txtAge->Text, age) || age < 16 || age > 100) {
-                MessageBox::Show(L"Вік має бути цілим числом від 16 до 100.", L"Помилка вводу",
-                    MessageBoxButtons::OK, MessageBoxIcon::Warning);
-                return;
-            }
+            if (!ValidateInputs(age)) { return; }
 
-            // --- String^ -> std::string через marshal_as (ЗАВДАННЯ 2) ---
-            std::string f  = marshal_as<std::string>(txtFirst->Text->Trim());
-            std::string m  = marshal_as<std::string>(txtMid->Text->Trim());
-            std::string l  = marshal_as<std::string>(txtLast->Text->Trim());
-            std::string g  = marshal_as<std::string>(cbGender->Text);
-            std::string gr = marshal_as<std::string>(txtGroup->Text->Trim());
-            std::string pet= marshal_as<std::string>(txtPets->Text->Trim());
-            std::string sp = marshal_as<std::string>(txtSport->Text->Trim());
+            Student* s = MakeStudentFromInputs(age);
+            students_->push_back(s);                                  // оновлюємо vector
 
-            // --- звільняємо попередній нативний об'єкт (delete старий) ---
-            CleanupNative();
-
-            // --- створюємо нативний Student (бізнес-логіка Теми 1-4) ---
-            currentStudent_ = new Student(f, m, l, g, age, gr, pet, sp);
-
-            // --- вивід у Label: std::string -> String^ через gcnew String (ЗАВДАННЯ 3) ---
-            String^ info = gcnew String(currentStudent_->getInfo().c_str());
-            lblResult->Text = info;
-
-            // --- варіант А: додаємо рядок в історію ---
-            lstHistory->Items->Add(info);
+            String^ info = gcnew String(s->getInfo().c_str());
+            lstStudents->Items->Add(info);
+            lstStudents->SelectedIndex = lstStudents->Items->Count - 1;
+            lblResult->Text = L"Додано: " + info;
         }
 
-        // варіант Б — скидання форми та label
+        // РЕДАГУВАТИ: відкрити діалог з даними обраного, оновити vector за DialogResult
+        System::Void btnEdit_Click(Object^ sender, EventArgs^ e) {
+            int idx = lstStudents->SelectedIndex;
+            if (idx < 0) {
+                MessageBox::Show(L"Оберіть студента у списку.", L"Редагування",
+                    MessageBoxButtons::OK, MessageBoxIcon::Information);
+                return;
+            }
+
+            Student* cur = (*students_)[idx];
+
+            // ЗАВДАННЯ 1: передаємо поточні дані у конструктор діалогу
+            StudentEditForm^ dlg = gcnew StudentEditForm(
+                gcnew String(cur->getFirstName().c_str()),
+                gcnew String(cur->getMidName().c_str()),
+                gcnew String(cur->getLastName().c_str()),
+                gcnew String(cur->getGender().c_str()),
+                cur->getAge(),
+                gcnew String(cur->getGroup().c_str()),
+                gcnew String(cur->getHomePets().c_str()),
+                gcnew String(cur->getSport().c_str()));
+
+            // ЗАВДАННЯ 2: ShowDialog() + перевірка DialogResult
+            if (dlg->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
+                // ЗАВДАННЯ 3: читаємо відредаговані дані через властивості (EditedAge тощо)
+                std::string f  = marshal_as<std::string>(dlg->EditedFirst);
+                std::string m  = marshal_as<std::string>(dlg->EditedMid);
+                std::string l  = marshal_as<std::string>(dlg->EditedLast);
+                std::string g  = marshal_as<std::string>(dlg->EditedGender);
+                int age        = dlg->EditedAge;
+                std::string gr = marshal_as<std::string>(dlg->EditedGroup);
+                std::string pet= marshal_as<std::string>(dlg->EditedPets);
+                std::string sp = marshal_as<std::string>(dlg->EditedSport);
+
+                // ЗАВДАННЯ 4: оновлюємо vector (старий delete, новий на його місце)
+                Student* updated = new Student(f, m, l, g, age, gr, pet, sp);
+                delete (*students_)[idx];
+                (*students_)[idx] = updated;
+
+                String^ info = gcnew String(updated->getInfo().c_str());
+                lstStudents->Items[idx] = info;                       // оновлюємо рядок списку
+                lstStudents->SelectedIndex = idx;
+                lblResult->Text = L"Відредаговано: " + info;
+            }
+            else {
+                lblResult->Text = L"Редагування скасовано.";          // DialogResult != OK
+            }
+        }
+
+        // ОЧИСТИТИ: скидаємо лише поля вводу (список студентів лишається)
         System::Void btnClear_Click(Object^ sender, EventArgs^ e) {
             txtFirst->Clear(); txtMid->Clear(); txtLast->Clear();
             txtAge->Clear();   txtGroup->Clear(); txtPets->Clear(); txtSport->Clear();
             cbGender->SelectedIndex = -1;
-            lblResult->Text = L"Очищено. Введіть нові дані.";
-            CleanupNative();
+            lblResult->Text = L"Поля очищено.";
         }
     };
 }
