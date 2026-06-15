@@ -17,7 +17,7 @@ Staff::Staff(
 }
 
 Staff::~Staff() {
-    std::cout << "[~Staff] " << getLastName() << " (персонал) видалено." << std::endl;
+    std::cout << "[~Staff] " << getLastName() << " (staff) deleted." << std::endl;
 }
 
 std::string Staff::getPosition() const { return position_; }
@@ -41,23 +41,23 @@ bool Staff::setShift(const std::string& shift) {
 
 std::string Staff::getInfo() const {
     return lastName_ + " " + getFirstName() + " " + getMidName()
-        + " | посада: " + position_
-        + " | зміна: " + shift_
-        + " | вік: " + std::to_string(age_);
+        + " | position: " + position_
+        + " | shift: " + shift_
+        + " | age: " + std::to_string(age_);
 }
 
 std::string Staff::getFormalGreeting() const {
-    const std::string prefix = (gender_ == "Жіноча") ? "Шановна пані " : "Шановний пане ";
+    const std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
     return prefix + getFirstName() + " " + getMidName() + "!";
 }
 
 std::string Staff::getBadgeText() const {
-    return position_ + ": " + lastName_ + ", " + std::to_string(age_) + " р.";
+    return position_ + ": " + lastName_ + ", " + std::to_string(age_) + " y.o.";
 }
 
 std::string Staff::getAdultStatus() const {
     if (isAdult()) {
-        return "Співробітник " + lastName_ + " може виконувати повну зміну.";
+        return "Staff member " + lastName_ + " can work a full shift.";
     }
-    return "Співробітник " + lastName_ + " потребує обмеженого графіка за віком.";
+    return "Staff member " + lastName_ + " needs a limited schedule by age.";
 }

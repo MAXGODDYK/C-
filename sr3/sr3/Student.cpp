@@ -19,7 +19,7 @@ Student::Student(
 }
 
 Student::~Student() {
-    std::cout << "[~Student] " << getLastName() << " (студент) видалено." << std::endl;
+    std::cout << "[~Student] " << getLastName() << " (student) deleted." << std::endl;
 }
 
 std::string Student::getGroup()    const { return group_; }
@@ -52,20 +52,19 @@ bool Student::setSport(const std::string& sport) {
 
 std::string Student::getInfo() const {
     return lastName_ + " " + getFirstName() + " " + getMidName()
-        + " | група: " + group_
-        + " | улюбленці: " + homePets_
-        + " | спорт: " + sport_
-        + " | вік: " + std::to_string(age_);
+        + " | group: " + group_
+        + " | pets: " + homePets_
+        + " | sport: " + sport_
+        + " | age: " + std::to_string(age_);
 }
 
 std::string Student::getFormalGreeting() const {
-    // gender_ protected — доступний напряму
-    const std::string prefix = (gender_ == "Жіноча") ? "Шановна пані " : "Шановний пане ";
+    const std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
     return prefix + getFirstName() + " " + getMidName() + "!";
 }
 
 std::string Student::getLiveGreeting() const {
-    return "Привіт, " + getFirstName() + "!";
+    return "Hi, " + getFirstName() + "!";
 }
 
 std::string Student::getListFormat() const {
@@ -73,9 +72,8 @@ std::string Student::getListFormat() const {
 }
 
 std::string Student::getAdultStatus() const {
-    // isAdult() — protected метод з Person
     if (isAdult()) {
-        return getFirstName() + " — повнолітній студент (" + std::to_string(age_) + " р.)";
+        return getFirstName() + " is an adult student (" + std::to_string(age_) + " y.o.)";
     }
-    return getFirstName() + " — неповнолітній студент (" + std::to_string(age_) + " р.)";
+    return getFirstName() + " is a minor student (" + std::to_string(age_) + " y.o.)";
 }

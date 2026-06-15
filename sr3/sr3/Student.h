@@ -23,7 +23,7 @@ public:
     std::string getHomePets() const;
     std::string getSport()    const;
 
-    // повертають false якщо дані не пройшли валідацію
+    // Return false if the data fails validation.
     bool setGroup(const std::string& grp);
     bool setHomePets(const std::string& homePets);
     bool setSport(const std::string& sport);

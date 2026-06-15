@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// підрахунок обєктів за типом через dynamic_cast
+// Count objects by type via dynamic_cast.
 void countStaff(const vector<unique_ptr<Person>>& people) {
     int students = 0, teachers = 0, staff = 0;
     for (const auto& p : people) {
@@ -18,63 +18,63 @@ void countStaff(const vector<unique_ptr<Person>>& people) {
         else if (dynamic_cast<Teacher*>(p.get())) ++teachers;
         else if (dynamic_cast<Staff*>(p.get()))   ++staff;
     }
-    cout << "  Студентів:  " << students << endl;
-    cout << "  Викладачів: " << teachers << endl;
-    cout << "  Персоналу:  " << staff    << endl;
+    cout << "  Students: " << students << endl;
+    cout << "  Teachers: " << teachers << endl;
+    cout << "  Staff:    " << staff    << endl;
 }
 
 int main() {
-    SetConsoleOutputCP(65001);  // UTF-8 для консолі Windows
+    SetConsoleOutputCP(65001);  // UTF-8 for the Windows console
     cout << "========================================" << endl;
-    cout << " StudentPortfolio — Теми 1-4: Підсумок " << endl;
+    cout << " StudentPortfolio - Themes 1-4: Summary " << endl;
     cout << "========================================" << endl << endl;
 
     vector<unique_ptr<Person>> people;
 
     people.push_back(make_unique<Teacher>(
-        "Олена", "Ігорівна", "Коваленко", "Жіноча", 34,
-        "ООП C++", "старший викладач"));
+        "Olena", "Ihorivna", "Kovalenko", "Female", 34,
+        "OOP C++", "Senior Lecturer"));
 
     people.push_back(make_unique<Staff>(
-        "Андрій", "Миколайович", "Шевченко", "Чоловіча", 45,
-        "лаборант", "денна"));
+        "Andriy", "Mykolayovych", "Shevchenko", "Male", 45,
+        "Lab assistant", "day"));
 
-    // замініть на свої реальні дані
+    // replace with your own real data
     people.push_back(make_unique<Student>(
-        "Максим", "Олексійович", "Годик", "Чоловіча", 19,
-        "ПІ-21", "кіт Барсик", "футбол"));
+        "Maksym", "Oleksiyovych", "Hodyk", "Male", 19,
+        "PI-21", "cat Barsyk", "football"));
 
     people.push_back(make_unique<Student>(
-        "Іван", "Петрович", "Іваненко", "Чоловіча", 17,
-        "ПІ-22", "немає", "шахи"));
+        "Ivan", "Petrovych", "Ivanenko", "Male", 17,
+        "PI-22", "none", "chess"));
 
-    cout << "--- Списочний склад ---" << endl;
+    cout << "--- Roster ---" << endl;
     for (const auto& p : people) {
         cout << "  " << p->getInfo() << endl;
     }
 
-    cout << endl << "--- Офіційні привітання ---" << endl;
+    cout << endl << "--- Formal greetings ---" << endl;
     for (const auto& p : people) {
         cout << "  " << p->getFormalGreeting() << endl;
     }
 
-    cout << endl << "--- Студенти (dynamic_cast) ---" << endl;
+    cout << endl << "--- Students (dynamic_cast) ---" << endl;
     for (const auto& p : people) {
         if (Student* s = dynamic_cast<Student*>(p.get())) {
             cout << "  " << s->getLiveGreeting() << endl;
-            cout << "  Список: " << s->getListFormat() << endl;
+            cout << "  List: " << s->getListFormat() << endl;
             cout << "  " << s->getAdultStatus() << endl;
         }
     }
 
-    cout << endl << "--- Викладачі (dynamic_cast) ---" << endl;
+    cout << endl << "--- Teachers (dynamic_cast) ---" << endl;
     for (const auto& p : people) {
         if (Teacher* t = dynamic_cast<Teacher*>(p.get())) {
             cout << "  " << t->getAdultStatus() << endl;
         }
     }
 
-    cout << endl << "--- Персонал (dynamic_cast) ---" << endl;
+    cout << endl << "--- Staff (dynamic_cast) ---" << endl;
     for (const auto& p : people) {
         if (Staff* st = dynamic_cast<Staff*>(p.get())) {
             cout << "  " << st->getBadgeText() << endl;
@@ -82,21 +82,21 @@ int main() {
         }
     }
 
-    cout << endl << "--- Статистика ---" << endl;
+    cout << endl << "--- Statistics ---" << endl;
     countStaff(people);
 
-    cout << endl << "--- Сеттери з валідацією ---" << endl;
+    cout << endl << "--- Setters with validation ---" << endl;
     for (const auto& p : people) {
         if (Student* s = dynamic_cast<Student*>(p.get())) {
-            cout << "  Спорт до: " << s->getSport() << endl;
-            s->setSport("шахи");
-            cout << "  Спорт після: " << s->getSport() << endl;
-            bool bad = s->setGroup("ДУЖЕ-ДОВГА-НАЗВА");
-            cout << "  setGroup (занадто довга): " << (bad ? "OK" : "відхилено") << endl;
+            cout << "  Sport before: " << s->getSport() << endl;
+            s->setSport("chess");
+            cout << "  Sport after: " << s->getSport() << endl;
+            bool bad = s->setGroup("VERY-LONG-NAME");
+            cout << "  setGroup (too long): " << (bad ? "OK" : "rejected") << endl;
             break;
         }
     }
 
-    cout << endl << "--- Завершення (деструктори) ---" << endl;
+    cout << endl << "--- Finalization (destructors) ---" << endl;
     return 0;
 }

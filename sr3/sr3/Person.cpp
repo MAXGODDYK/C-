@@ -12,7 +12,7 @@ Person::Person(std::string fn, std::string mn, std::string ln, std::string g, in
 }
 
 Person::~Person() {
-    std::cout << "[~Person] " << lastName_ << " видалено." << std::endl;
+    std::cout << "[~Person] " << lastName_ << " deleted." << std::endl;
 }
 
 bool Person::isAdult() const {
