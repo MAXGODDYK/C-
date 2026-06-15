@@ -1,6 +1,5 @@
 ﻿#include "Staff.h"
 
-#include <iostream>
 #include <utility>
 
 Staff::Staff(
@@ -10,14 +9,15 @@ Staff::Staff(
     std::string g,
     int a,
     std::string position,
-    std::string shift)
+    std::string shift,
+    int experienceYears)
     : Person(std::move(fn), std::move(mn), std::move(ln), std::move(g), a),
       position_(std::move(position)),
-      shift_(std::move(shift)) {
+      shift_(std::move(shift)),
+      experienceYears_(experienceYears) {
 }
 
 Staff::~Staff() {
-    std::cout << "[~Staff] " << getLastName() << " (персонал) видалено." << std::endl;
 }
 
 std::string Staff::getPosition() const { return position_; }
@@ -39,25 +39,29 @@ bool Staff::setShift(const std::string& shift) {
     return false;
 }
 
+std::string Staff::getRole()            const { return "Staff"; }
+int         Staff::getExperienceYears() const { return experienceYears_; }
+
 std::string Staff::getInfo() const {
     return lastName_ + " " + getFirstName() + " " + getMidName()
-        + " | посада: " + position_
-        + " | зміна: " + shift_
-        + " | вік: " + std::to_string(age_);
+        + " | position: " + position_
+        + " | shift: " + shift_
+        + " | experience: " + std::to_string(experienceYears_) + " y."
+        + " | age: " + std::to_string(age_);
 }
 
 std::string Staff::getFormalGreeting() const {
-    const std::string prefix = (gender_ == "Жіноча") ? "Шановна пані " : "Шановний пане ";
+    const std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
     return prefix + getFirstName() + " " + getMidName() + "!";
 }
 
 std::string Staff::getBadgeText() const {
-    return position_ + ": " + lastName_ + ", " + std::to_string(age_) + " р.";
+    return position_ + ": " + lastName_ + ", " + std::to_string(age_) + " y.o.";
 }
 
 std::string Staff::getAdultStatus() const {
     if (isAdult()) {
-        return "Співробітник " + lastName_ + " може виконувати повну зміну.";
+        return "Staff member " + lastName_ + " can work a full shift.";
     }
-    return "Співробітник " + lastName_ + " потребує обмеженого графіка за віком.";
+    return "Staff member " + lastName_ + " needs a limited schedule by age.";
 }

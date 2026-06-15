@@ -1,6 +1,5 @@
 ﻿#include "Teacher.h"
 
-#include <iostream>
 #include <utility>
 
 Teacher::Teacher(
@@ -10,14 +9,15 @@ Teacher::Teacher(
     std::string g,
     int a,
     std::string subject,
-    std::string academicTitle)
+    std::string academicTitle,
+    int experienceYears)
     : Person(std::move(fn), std::move(mn), std::move(ln), std::move(g), a),
       subject_(std::move(subject)),
-      academicTitle_(std::move(academicTitle)) {
+      academicTitle_(std::move(academicTitle)),
+      experienceYears_(experienceYears) {
 }
 
 Teacher::~Teacher() {
-    std::cout << "[~Teacher] " << getLastName() << " (викладач) видалено." << std::endl;
 }
 
 std::string Teacher::getSubject()       const { return subject_; }
@@ -31,21 +31,25 @@ bool Teacher::setSubject(const std::string& subj) {
     return false;
 }
 
+std::string Teacher::getRole()            const { return "Teacher"; }
+int         Teacher::getExperienceYears() const { return experienceYears_; }
+
 std::string Teacher::getInfo() const {
     return lastName_ + " " + getFirstName() + " " + getMidName()
-        + " | предмет: " + subject_
-        + " | звання: " + academicTitle_
-        + " | вік: " + std::to_string(age_);
+        + " | subject: " + subject_
+        + " | title: " + academicTitle_
+        + " | experience: " + std::to_string(experienceYears_) + " y."
+        + " | age: " + std::to_string(age_);
 }
 
 std::string Teacher::getFormalGreeting() const {
-    const std::string prefix = (gender_ == "Жіноча") ? "Шановна пані " : "Шановний пане ";
+    const std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
     return prefix + getFirstName() + " " + getMidName() + "!";
 }
 
 std::string Teacher::getAdultStatus() const {
     if (isAdult()) {
-        return "Викладач " + lastName_ + " має повний доступ до службових обов'язків.";
+        return "Teacher " + lastName_ + " has full access to job duties.";
     }
-    return "Викладач " + lastName_ + " ще не може мати дорослі службові обов'язки.";
+    return "Teacher " + lastName_ + " cannot yet hold adult job duties.";
 }

@@ -6,6 +6,7 @@ class Staff : public Person {
 private:
     std::string position_;
     std::string shift_;
+    int experienceYears_;        // years of work experience
 
 public:
     Staff(
@@ -15,7 +16,8 @@ public:
         std::string g,
         int a,
         std::string position,
-        std::string shift);
+        std::string shift,
+        int experienceYears);
 
     std::string getPosition() const;
     std::string getShift()    const;
@@ -23,8 +25,10 @@ public:
     bool setPosition(const std::string& pos);
     bool setShift(const std::string& shift);
 
-    std::string getInfo()           const override;
-    std::string getFormalGreeting() const override;
+    std::string getRole()            const override;   // "Staff"
+    int         getExperienceYears() const override;
+    std::string getInfo()            const override;
+    std::string getFormalGreeting()  const override;
 
     std::string getBadgeText()   const;
     std::string getAdultStatus() const;

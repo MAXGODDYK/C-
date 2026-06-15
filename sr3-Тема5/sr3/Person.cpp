@@ -1,6 +1,5 @@
 ﻿#include "Person.h"
 
-#include <iostream>
 #include <utility>
 
 Person::Person(std::string fn, std::string mn, std::string ln, std::string g, int a)
@@ -12,7 +11,6 @@ Person::Person(std::string fn, std::string mn, std::string ln, std::string g, in
 }
 
 Person::~Person() {
-    std::cout << "[~Person] " << lastName_ << " видалено." << std::endl;
 }
 
 bool Person::isAdult() const {

@@ -23,17 +23,17 @@ public:
     std::string getHomePets() const;
     std::string getSport()    const;
 
-    // повертають false якщо дані не пройшли валідацію
+    // Return false if the data fails validation.
     bool setGroup(const std::string& grp);
     bool setHomePets(const std::string& homePets);
     bool setSport(const std::string& sport);
 
+    std::string getRole()           const override;   // "Student"
     std::string getInfo()           const override;
     std::string getFormalGreeting() const override;
 
-    std::string getLiveGreeting() const;
-    std::string getListFormat()   const;
-    std::string getAdultStatus()  const;
+    std::string getListFormat()  const;
+    std::string getAdultStatus() const;
 
     ~Student() override;
 };
