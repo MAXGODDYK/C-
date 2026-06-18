@@ -38,7 +38,12 @@ bool Person::setAge(int age) {
     return false;
 }
 
+std::string Person::getFullName() const {
+    // ПІБ одним рядком: Прізвище Ім'я По-батькові.
+    return lastName_ + " " + firstName_ + " " + middleName_;
+}
+
 std::string Person::getShortInfo() const {
-    // ПІБ + роль; роль визначається поліморфно через getRole().
-    return lastName_ + " " + firstName_ + " " + middleName_ + " (" + getRole() + ")";
+    // ПІБ + роль; ПІБ беремо з getFullName(), роль — поліморфно через getRole().
+    return getFullName() + " (" + getRole() + ")";
 }

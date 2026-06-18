@@ -41,6 +41,9 @@ public:
     virtual std::string getInfo()           const = 0;
     virtual std::string getFormalGreeting() const = 0;
 
+    // Повне ім'я одним рядком у форматі ПІБ (Тема 2: аналог getFullName()).
+    std::string getFullName() const;
+
     // Спільний для всіх: коротка інформація (ПІБ + роль). Роль — поліморфно через getRole().
     std::string getShortInfo() const;
 
