@@ -19,7 +19,7 @@ Person* createPerson(const string& type,
                      const string& lastName, const string& gender, int age) {
     if (type == "student") {
         return new Student(firstName, middleName, lastName, gender, age,
-                           "PI-00", "none", "none");
+                           "PI-00", "none", "none", "College of IT");
     }
     if (type == "teacher") {
         return new Teacher(firstName, middleName, lastName, gender, age,
@@ -95,14 +95,16 @@ int main() {
     // Двоє студентів із РІЗНИМИ хобі (Тема 2 ДЗ).
     auto maksym = make_unique<Student>(
         "Maksym", "Oleksiyovych", "Hodyk", "Male", 19,
-        "PI-21", "cat Barsyk", "football");
+        "PI-21", "cat Barsyk", "football", "College of IT");
+    maksym->setAverageGrade(4.5);   // Тема 2: середній бал
     maksym->addHobby("guitar");
     maksym->addHobby("3D modeling");
     people.push_back(std::move(maksym));
 
     auto ivan = make_unique<Student>(
         "Ivan", "Petrovych", "Ivanenko", "Male", 17,   // вік < 18 -> неповнолітній
-        "PI-22", "none", "chess");
+        "PI-22", "none", "chess", "College of Economics");
+    ivan->setAverageGrade(3.8);
     ivan->addHobby("chess club");
     people.push_back(std::move(ivan));
 
@@ -161,6 +163,8 @@ int main() {
             cout << "  Sport after:  " << student->getSport() << endl;
             bool accepted = student->setGroup("VERY-LONG-NAME");   // > 10 символів
             cout << "  setGroup (too long): " << (accepted ? "accepted" : "rejected") << endl;
+            bool gradeOk = student->setAverageGrade(9.0);          // поза межами 2.0..5.0
+            cout << "  setAverageGrade(9.0): " << (gradeOk ? "accepted" : "rejected") << endl;
             break;
         }
     }

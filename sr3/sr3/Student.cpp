@@ -1,14 +1,19 @@
 #include "Student.h"
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <utility>
 
 Student::Student(std::string firstName, std::string middleName, std::string lastName,
                  std::string gender, int age,
-                 std::string group, std::string homePets, std::string sport)
+                 std::string group, std::string homePets, std::string sport,
+                 std::string college)
     : Person(std::move(firstName), std::move(middleName), std::move(lastName),
              std::move(gender), age),
       group_(std::move(group)),
+      college_(std::move(college)),
+      averageGrade_(0.0),          // Тема 2: бал спершу 0, далі через setAverageGrade()
       homePets_(std::move(homePets)),
       sport_(std::move(sport)) {
 }
@@ -17,9 +22,11 @@ Student::~Student() {
     std::cout << "[~Student] " << getLastName() << " (student) deleted." << std::endl;
 }
 
-std::string Student::getGroup()    const { return group_; }
-std::string Student::getHomePets() const { return homePets_; }
-std::string Student::getSport()    const { return sport_; }
+std::string Student::getGroup()        const { return group_; }
+std::string Student::getHomePets()     const { return homePets_; }
+std::string Student::getSport()        const { return sport_; }
+std::string Student::getCollege()      const { return college_; }
+double      Student::getAverageGrade() const { return averageGrade_; }
 
 bool Student::setGroup(const std::string& group) {
     const std::size_t maxGroupLen = 10;
@@ -46,6 +53,24 @@ bool Student::setSport(const std::string& sport) {
     return false;
 }
 
+bool Student::setCollege(const std::string& college) {
+    const std::size_t maxCollegeLen = 50;
+    if (!college.empty() && college.length() <= maxCollegeLen) {
+        college_ = college;
+        return true;
+    }
+    return false;
+}
+
+// Тема 2: валідація середнього балу — від 2.0 до 5.0.
+bool Student::setAverageGrade(double grade) {
+    if (grade >= 2.0 && grade <= 5.0) {
+        averageGrade_ = grade;
+        return true;
+    }
+    return false;
+}
+
 void Student::addHobby(const std::string& hobby) {
     // Порожні хобі не додаємо (проста валідація).
     if (!hobby.empty()) {
@@ -60,10 +85,16 @@ std::vector<std::string> Student::getHobbies() const {
 std::string Student::getRole() const { return "Student"; }
 
 std::string Student::getInfo() const {
+    // Середній бал форматуємо до 2 знаків після коми (Тема 2).
+    std::ostringstream gradeStr;
+    gradeStr << std::fixed << std::setprecision(2) << averageGrade_;
+
     std::string info = lastName_ + " " + getFirstName() + " " + getMiddleName()
         + " | group: " + group_
+        + " | college: " + college_
         + " | pets: " + homePets_
         + " | sport: " + sport_
+        + " | GPA: " + gradeStr.str()
         + " | age: " + std::to_string(age_);
 
     // Хобі виводимо лише якщо вони є.

@@ -7,6 +7,8 @@
 class Student : public Person {
 private:
     std::string group_;
+    std::string college_;        // Тема 2: коледж
+    double      averageGrade_;   // Тема 2: середній бал (0.0, доки не встановлено)
     // Індивідуальні поля студента (власний контрибут):
     std::string homePets_;
     std::string sport_;
@@ -15,16 +17,21 @@ private:
 public:
     Student(std::string firstName, std::string middleName, std::string lastName,
             std::string gender, int age,
-            std::string group, std::string homePets, std::string sport);
+            std::string group, std::string homePets, std::string sport,
+            std::string college);
 
-    std::string getGroup()    const;
-    std::string getHomePets() const;
-    std::string getSport()    const;
+    std::string getGroup()        const;
+    std::string getHomePets()     const;
+    std::string getSport()        const;
+    std::string getCollege()      const;   // Тема 2
+    double      getAverageGrade() const;   // Тема 2
 
     // Сеттери повертають false, якщо дані не пройшли валідацію.
     bool setGroup(const std::string& group);
     bool setHomePets(const std::string& homePets);
     bool setSport(const std::string& sport);
+    bool setCollege(const std::string& college);
+    bool setAverageGrade(double grade);    // валідація: 2.0..5.0
 
     // Хобі: додавання одного та отримання повного списку.
     void addHobby(const std::string& hobby);
