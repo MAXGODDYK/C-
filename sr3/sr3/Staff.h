@@ -4,26 +4,26 @@
 
 class Staff : public Person {
 private:
-    std::string position_;
-    std::string shift_;
+    std::string position_;     // посада
+    std::string department_;   // відділ
+    std::string hireDate_;     // дата прийому (рядок, напр. "2019-09-01")
 
 public:
-    Staff(
-        std::string fn,
-        std::string mn,
-        std::string ln,
-        std::string g,
-        int a,
-        std::string position,
-        std::string shift);
+    Staff(std::string firstName, std::string middleName, std::string lastName,
+          std::string gender, int age,
+          std::string position, std::string department, std::string hireDate);
 
-    std::string getPosition() const;
-    std::string getShift()    const;
+    std::string getPosition()   const;
+    std::string getDepartment() const;
+    std::string getHireDate()   const;
 
-    bool setPosition(const std::string& pos);
-    bool setShift(const std::string& shift);
+    // Сеттери з валідацією (порожні значення відхиляються).
+    bool setPosition(const std::string& position);
+    bool setDepartment(const std::string& department);
+    bool setHireDate(const std::string& hireDate);
 
-    std::string getInfo()           const override;
+    std::string getRole() const override;   // "Staff"
+    std::string getInfo() const override;    // формат, відмінний від Student/Teacher
     std::string getFormalGreeting() const override;
 
     std::string getBadgeText()   const;

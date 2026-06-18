@@ -3,56 +3,67 @@
 #include <iostream>
 #include <utility>
 
-Staff::Staff(
-    std::string fn,
-    std::string mn,
-    std::string ln,
-    std::string g,
-    int a,
-    std::string position,
-    std::string shift)
-    : Person(std::move(fn), std::move(mn), std::move(ln), std::move(g), a),
+Staff::Staff(std::string firstName, std::string middleName, std::string lastName,
+             std::string gender, int age,
+             std::string position, std::string department, std::string hireDate)
+    : Person(std::move(firstName), std::move(middleName), std::move(lastName),
+             std::move(gender), age),
       position_(std::move(position)),
-      shift_(std::move(shift)) {
+      department_(std::move(department)),
+      hireDate_(std::move(hireDate)) {
 }
 
 Staff::~Staff() {
     std::cout << "[~Staff] " << getLastName() << " (staff) deleted." << std::endl;
 }
 
-std::string Staff::getPosition() const { return position_; }
-std::string Staff::getShift()    const { return shift_; }
+std::string Staff::getPosition()   const { return position_; }
+std::string Staff::getDepartment() const { return department_; }
+std::string Staff::getHireDate()   const { return hireDate_; }
 
-bool Staff::setPosition(const std::string& pos) {
-    if (!pos.empty() && pos.length() <= 50) {
-        position_ = pos;
+bool Staff::setPosition(const std::string& position) {
+    const std::size_t maxPositionLen = 50;
+    if (!position.empty() && position.length() <= maxPositionLen) {
+        position_ = position;
         return true;
     }
     return false;
 }
 
-bool Staff::setShift(const std::string& shift) {
-    if (!shift.empty()) {
-        shift_ = shift;
+bool Staff::setDepartment(const std::string& department) {
+    if (!department.empty()) {
+        department_ = department;
         return true;
     }
     return false;
 }
+
+bool Staff::setHireDate(const std::string& hireDate) {
+    if (!hireDate.empty()) {
+        hireDate_ = hireDate;
+        return true;
+    }
+    return false;
+}
+
+std::string Staff::getRole() const { return "Staff"; }
 
 std::string Staff::getInfo() const {
-    return lastName_ + " " + getFirstName() + " " + getMidName()
+    // Формат навмисно відрізняється від Student/Teacher (Тема 2 ДЗ).
+    return lastName_ + " " + getFirstName() + " " + getMiddleName()
         + " | position: " + position_
-        + " | shift: " + shift_
+        + " | department: " + department_
+        + " | hired: " + hireDate_
         + " | age: " + std::to_string(age_);
 }
 
 std::string Staff::getFormalGreeting() const {
     const std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
-    return prefix + getFirstName() + " " + getMidName() + "!";
+    return prefix + getFirstName() + " " + getMiddleName() + "!";
 }
 
 std::string Staff::getBadgeText() const {
-    return position_ + ": " + lastName_ + ", " + std::to_string(age_) + " y.o.";
+    return position_ + " (" + department_ + "): " + lastName_ + ", " + std::to_string(age_) + " y.o.";
 }
 
 std::string Staff::getAdultStatus() const {

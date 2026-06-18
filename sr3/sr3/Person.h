@@ -2,36 +2,48 @@
 
 #include <string>
 
-// Abstract base class — cannot be instantiated directly.
+// Абстрактний базовий клас: створити Person напряму не можна,
+// бо є чисто віртуальні методи (getInfo, getFormalGreeting, getRole).
+// Демонструє інкапсуляцію: private-поля доступні лише через геттери,
+// protected-поля — напряму в нащадках, але приховані від main().
 class Person {
 private:
-    // Accessible only inside Person; subclasses use the getters.
+    // Доступні ТІЛЬКИ через геттери — навіть нащадки читають їх через getFirstName().
     std::string firstName_;
-    std::string midName_;
+    std::string middleName_;
 
 protected:
-    // Subclasses may access these directly.
+    // Доступні напряму в нащадках (Student/Teacher/Staff), але не з main().
     std::string lastName_;
     std::string gender_;
     int age_;
 
+    // protected-метод: спільна логіка для нащадків, прихована від зовнішнього коду.
     bool isAdult() const;
 
 public:
-    Person(std::string fn, std::string mn, std::string ln, std::string g, int a);
+    Person(std::string firstName, std::string middleName, std::string lastName,
+           std::string gender, int age);
 
-    std::string getFirstName() const;
-    std::string getMidName()   const;
-    std::string getLastName()  const;
-    std::string getGender()    const;
-    int         getAge()       const;
+    std::string getFirstName()  const;
+    std::string getMiddleName() const;
+    std::string getLastName()   const;
+    std::string getGender()     const;
+    int         getAge()        const;
 
-    bool setAge(int a);
+    // Сеттер з валідацією діапазону; повертає false, якщо значення некоректне.
+    bool setAge(int age);
 
-    // Subclasses must implement these.
+    // Роль для коротких звітів ("Student" / "Teacher" / "Staff").
+    virtual std::string getRole() const = 0;
+
+    // Чисто віртуальні: кожен нащадок зобов'язаний реалізувати.
     virtual std::string getInfo()           const = 0;
     virtual std::string getFormalGreeting() const = 0;
 
-    // Virtual destructor so deleting via a base pointer calls the subclass dtor.
+    // Спільний для всіх: коротка інформація (ПІБ + роль). Роль — поліморфно через getRole().
+    std::string getShortInfo() const;
+
+    // Віртуальний деструктор: видалення через Person* викликає деструктор нащадка.
     virtual ~Person();
 };

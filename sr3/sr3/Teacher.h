@@ -8,21 +8,20 @@ private:
     std::string academicTitle_;
 
 public:
-    Teacher(
-        std::string fn,
-        std::string mn,
-        std::string ln,
-        std::string g,
-        int a,
-        std::string subject,
-        std::string academicTitle);
+    Teacher(std::string firstName, std::string middleName, std::string lastName,
+            std::string gender, int age,
+            std::string subject, std::string academicTitle);
 
     std::string getSubject()       const;
     std::string getAcademicTitle() const;
 
-    bool setSubject(const std::string& subj);
+    // Сеттери з валідацією (порожні значення відхиляються).
+    bool setSubject(const std::string& subject);
+    bool setAcademicTitle(const std::string& academicTitle);
 
-    std::string getInfo()           const override;
+    std::string getRole() const override;   // "Teacher"
+    // 'final': getInfo() не можна перевизначити в нащадках Teacher (Тема 4, завд. 2).
+    std::string getInfo() const override final;
     std::string getFormalGreeting() const override;
 
     std::string getAdultStatus() const;

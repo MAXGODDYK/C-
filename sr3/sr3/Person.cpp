@@ -3,15 +3,17 @@
 #include <iostream>
 #include <utility>
 
-Person::Person(std::string fn, std::string mn, std::string ln, std::string g, int a)
-    : firstName_(std::move(fn)),
-      midName_(std::move(mn)),
-      lastName_(std::move(ln)),
-      gender_(std::move(g)),
-      age_(a) {
+Person::Person(std::string firstName, std::string middleName, std::string lastName,
+               std::string gender, int age)
+    : firstName_(std::move(firstName)),
+      middleName_(std::move(middleName)),
+      lastName_(std::move(lastName)),
+      gender_(std::move(gender)),
+      age_(age) {
 }
 
 Person::~Person() {
+    // Доводить, що деструктор справді викликається (Тема 4).
     std::cout << "[~Person] " << lastName_ << " deleted." << std::endl;
 }
 
@@ -19,16 +21,24 @@ bool Person::isAdult() const {
     return age_ >= 18;
 }
 
-std::string Person::getFirstName() const { return firstName_; }
-std::string Person::getMidName()   const { return midName_; }
-std::string Person::getLastName()  const { return lastName_; }
-std::string Person::getGender()    const { return gender_; }
-int         Person::getAge()       const { return age_; }
+std::string Person::getFirstName()  const { return firstName_; }
+std::string Person::getMiddleName() const { return middleName_; }
+std::string Person::getLastName()   const { return lastName_; }
+std::string Person::getGender()     const { return gender_; }
+int         Person::getAge()        const { return age_; }
 
-bool Person::setAge(int a) {
-    if (a >= 16 && a <= 100) {
-        age_ = a;
+bool Person::setAge(int age) {
+    // Іменовані межі замість "магічних чисел".
+    const int minAge = 16;
+    const int maxAge = 100;
+    if (age >= minAge && age <= maxAge) {
+        age_ = age;
         return true;
     }
     return false;
+}
+
+std::string Person::getShortInfo() const {
+    // ПІБ + роль; роль визначається поліморфно через getRole().
+    return lastName_ + " " + firstName_ + " " + middleName_ + " (" + getRole() + ")";
 }
