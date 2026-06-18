@@ -23,7 +23,7 @@ Person* createPerson(const string& type,
     }
     if (type == "teacher") {
         return new Teacher(firstName, middleName, lastName, gender, age,
-                           "General", "Lecturer");
+                           "General", "Lecturer", 5);
     }
     if (type == "staff") {
         return new Staff(firstName, middleName, lastName, gender, age,
@@ -86,7 +86,7 @@ int main() {
 
     people.push_back(make_unique<Teacher>(
         "Olena", "Ihorivna", "Kovalenko", "Female", 34,
-        "OOP C++", "Senior Lecturer"));
+        "OOP C++", "Senior Lecturer", 12));
 
     people.push_back(make_unique<Staff>(
         "Andriy", "Mykolayovych", "Shevchenko", "Male", 45,

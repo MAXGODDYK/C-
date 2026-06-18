@@ -5,19 +5,21 @@
 
 Teacher::Teacher(std::string firstName, std::string middleName, std::string lastName,
                  std::string gender, int age,
-                 std::string subject, std::string academicTitle)
+                 std::string subject, std::string academicTitle, int experienceYears)
     : Person(std::move(firstName), std::move(middleName), std::move(lastName),
              std::move(gender), age),
       subject_(std::move(subject)),
-      academicTitle_(std::move(academicTitle)) {
+      academicTitle_(std::move(academicTitle)),
+      experienceYears_(experienceYears) {
 }
 
 Teacher::~Teacher() {
     std::cout << "[~Teacher] " << getLastName() << " (teacher) deleted." << std::endl;
 }
 
-std::string Teacher::getSubject()       const { return subject_; }
-std::string Teacher::getAcademicTitle() const { return academicTitle_; }
+std::string Teacher::getSubject()         const { return subject_; }
+std::string Teacher::getAcademicTitle()   const { return academicTitle_; }
+int         Teacher::getExperienceYears() const { return experienceYears_; }
 
 bool Teacher::setSubject(const std::string& subject) {
     if (!subject.empty()) {
@@ -35,12 +37,23 @@ bool Teacher::setAcademicTitle(const std::string& academicTitle) {
     return false;
 }
 
+bool Teacher::setExperienceYears(int experienceYears) {
+    // Стаж не може бути від'ємним і реалістично не перевищує 80 років.
+    const int maxExperience = 80;
+    if (experienceYears >= 0 && experienceYears <= maxExperience) {
+        experienceYears_ = experienceYears;
+        return true;
+    }
+    return false;
+}
+
 std::string Teacher::getRole() const { return "Teacher"; }
 
 std::string Teacher::getInfo() const {
     return lastName_ + " " + getFirstName() + " " + getMiddleName()
         + " | subject: " + subject_
         + " | title: " + academicTitle_
+        + " | experience: " + std::to_string(experienceYears_) + " y."
         + " | age: " + std::to_string(age_);
 }
 

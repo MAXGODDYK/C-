@@ -30,3 +30,22 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio / MSBuild build & IDE artifacts
+.vs/
+[Xx]64/
+[Ww]in32/
+[Dd]ebug/
+[Rr]elease/
+*.ipch
+*.tlog
+*.pdb
+*.idb
+*.ilk
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+*.recipe
+*.vsidx
+*.lastbuildstate
