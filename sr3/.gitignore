@@ -1,0 +1,19 @@
+# Visual Studio / MSBuild build & IDE artifacts
+.vs/
+x64/
+x86/
+Win32/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.obj
+*.pdb
+*.ilk
+*.exe
+*.log
+*.tlog
+*.idb
+*.vsidx
