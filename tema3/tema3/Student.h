@@ -17,43 +17,23 @@ private:
 public:
     Student(const std::string& firstName, const std::string& midName, const std::string& lastName,
             const std::string& gender, int age, const std::string& group, const std::string& college,
-            const std::string& homePets, const std::string& sport)
-        : Person(firstName, midName, lastName, gender, age),
-          group_(group), college_(college), homePets_(homePets), sport_(sport), averageGrade_(0.0) {}
+            const std::string& homePets, const std::string& sport);
 
-    std::string getRole() const override { return "Student"; }
+    std::string getRole() const override;
+    void addHobby(const std::string& hobby);
+    std::vector<std::string> getHobbies() const;
+    std::string getInfo() const override;
 
-    void addHobby(const std::string& hobby) { if (!hobby.empty()) hobbies_.push_back(hobby); }
-    std::vector<std::string> getHobbies() const { return hobbies_; }
+    std::string getLiveGreeting() const;
+    std::string getListFormat()   const;
+    std::string getAdultStatus()  const;
 
-    std::string getInfo() const override {
-        std::string info = "Student: " + getFullName()
-            + ", group: " + group_ + ", college: " + college_
-            + ", pets: " + homePets_ + ", sport: " + sport_
-            + ", GPA: " + std::to_string(averageGrade_);
-        if (!hobbies_.empty()) {
-            info += ", hobbies: ";
-            for (std::size_t i = 0; i < hobbies_.size(); ++i) { info += hobbies_[i]; if (i + 1 < hobbies_.size()) info += ", "; }
-        }
-        return info;
-    }
-
-    // СР3: доступ до полів базового класу.
-    std::string getLiveGreeting() const { return "Hi, " + getFirstName() + "!"; }
-    std::string getListFormat()   const { return lastName_ + " " + getFirstName(); }
-
-    // ДЗ3 (Варіант А): protected isAdult() + age_.
-    std::string getAdultStatus() const {
-        if (isAdult()) return getFullName() + " is an adult student (" + std::to_string(age_) + " y.o.)";
-        return getFullName() + " is a minor student (" + std::to_string(age_) + " y.o.)";
-    }
-
-    std::string getHomePets() const { return homePets_; }
-    bool setHomePets(const std::string& p) { if (!p.empty()) { homePets_ = p; return true; } return false; }
-    std::string getSport() const { return sport_; }
-    bool setSport(const std::string& s) { if (!s.empty()) { sport_ = s; return true; } return false; }
-    std::string getGroup() const { return group_; }
-    void setGroup(const std::string& g) { group_ = g; }
-    double getAverageGrade() const { return averageGrade_; }
-    bool setAverageGrade(double g) { if (g >= 2.0 && g <= 5.0) { averageGrade_ = g; return true; } return false; }
+    std::string getHomePets() const;
+    bool setHomePets(const std::string& p);
+    std::string getSport() const;
+    bool setSport(const std::string& s);
+    std::string getGroup() const;
+    void setGroup(const std::string& g);
+    double getAverageGrade() const;
+    bool setAverageGrade(double g);
 };

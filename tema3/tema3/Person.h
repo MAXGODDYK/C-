@@ -2,9 +2,8 @@
 
 #include <string>
 
-// Тема 3 (об'єднання СР3 + ДЗ3).
-// Модель імені розбито (firstName/midName private; lastName/gender/age protected),
-// + protected isAdult() для нащадків.
+// Тема 3 (об'єднання). Split-name model + protected isAdult().
+// Оголошення; реалізація — у Person.cpp.
 class Person {
 private:
     std::string firstName_;
@@ -15,27 +14,24 @@ protected:
     std::string gender_;
     int age_;
 
-    bool isAdult() const { return age_ >= 18; }
+    bool isAdult() const;
 
 public:
-    Person(const std::string& firstName, const std::string& midName, const std::string& lastName,
-           const std::string& gender, int age)
-        : firstName_(firstName), midName_(midName), lastName_(lastName),
-          gender_(gender), age_(age) {}
+    Person(const std::string& firstName, const std::string& midName,
+           const std::string& lastName, const std::string& gender, int age);
 
-    std::string getFirstName() const { return firstName_; }
-    std::string getMidName()   const { return midName_; }
-    std::string getLastName()  const { return lastName_; }
-    std::string getGender()    const { return gender_; }
-    int         getAge()       const { return age_; }
+    std::string getFirstName() const;
+    std::string getMidName()   const;
+    std::string getLastName()  const;
+    std::string getGender()    const;
+    int         getAge()       const;
 
-    bool setAge(int newAge) { if (newAge >= 16 && newAge <= 100) { age_ = newAge; return true; } return false; }
+    bool setAge(int newAge);
+    std::string getFullName() const;
 
-    std::string getFullName() const { return lastName_ + " " + firstName_ + " " + midName_; }
+    virtual std::string getRole() const;
+    virtual std::string getInfo() const;
+    std::string getShortInfo() const;
 
-    virtual std::string getRole() const { return "Person"; }
-    virtual std::string getInfo() const { return getFullName() + ", age: " + std::to_string(age_); }
-    std::string getShortInfo() const { return getFullName() + " (" + getRole() + ")"; }
-
-    virtual ~Person() = default;
+    virtual ~Person();
 };
