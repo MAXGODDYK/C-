@@ -2,7 +2,7 @@
 
 #include "Person.h"
 
-// Тема 2 (СР). Ще один нащадок Person — для практики поліморфізму.
+// Тема 2 (СР). Ще один нащадок Person. Реалізація — у Teacher.cpp.
 class Teacher : public Person {
 private:
     std::string subject_;
@@ -10,31 +10,14 @@ private:
 
 public:
     Teacher(const std::string& fullName, int age,
-            const std::string& subject, int experience)
-        : Person(fullName, age), subject_(subject), experience_(experience) {}
+            const std::string& subject, int experience);
 
-    std::string getInfo() const override {
-        return "Teacher: " + getFullName()
-            + ", subject: " + subject_
-            + ", experience: " + std::to_string(experience_) + " y.";
-    }
+    std::string getInfo() const override;
 
-    std::string getSubject() const { return subject_; }
-    int getExperience() const { return experience_; }
+    std::string getSubject() const;
+    int getExperience() const;
 
     // Валідація у сеттерах.
-    bool setSubject(const std::string& subject) {
-        if (!subject.empty()) {
-            subject_ = subject;
-            return true;
-        }
-        return false;
-    }
-    bool setExperience(int years) {
-        if (years >= 0 && years <= 80) {
-            experience_ = years;
-            return true;
-        }
-        return false;
-    }
+    bool setSubject(const std::string& subject);
+    bool setExperience(int years);
 };

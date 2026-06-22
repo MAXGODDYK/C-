@@ -2,35 +2,24 @@
 
 #include <string>
 
-// Тема 2 (СР). Базовий клас.
-// Демонструє інкапсуляцію (private-поля + геттери), віртуальний метод
-// для поліморфізму та віртуальний деструктор.
+// Тема 2 (СР). Базовий клас (оголошення; реалізація — у Person.cpp).
 class Person {
 private:
     std::string fullName_;   // ПІБ одним рядком
     int age_;
 
 public:
-    Person(const std::string& fullName, int age)
-        : fullName_(fullName), age_(age) {}
+    Person(const std::string& fullName, int age);
 
-    std::string getFullName() const { return fullName_; }
-    int getAge() const { return age_; }
+    std::string getFullName() const;
+    int getAge() const;
 
-    // Сеттер з валідацією діапазону: вік від 16 до 100.
-    bool setAge(int newAge) {
-        if (newAge >= 16 && newAge <= 100) {
-            age_ = newAge;
-            return true;
-        }
-        return false;
-    }
+    // Сеттер з валідацією: вік від 16 до 100.
+    bool setAge(int newAge);
 
     // ВІРТУАЛЬНИЙ метод -> працює поліморфізм через Person*.
-    virtual std::string getInfo() const {
-        return "Person: " + fullName_ + ", age: " + std::to_string(age_);
-    }
+    virtual std::string getInfo() const;
 
-    // Віртуальний деструктор: коректне видалення через базовий покажчик.
-    virtual ~Person() = default;
+    // Віртуальний деструктор.
+    virtual ~Person();
 };

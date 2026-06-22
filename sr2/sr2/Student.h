@@ -2,7 +2,7 @@
 
 #include "Person.h"
 
-// Тема 2 (СР). Нащадок Person через PUBLIC-спадкування.
+// Тема 2 (СР). Нащадок Person (public). Реалізація — у Student.cpp.
 class Student : public Person {
 private:
     std::string group_;
@@ -11,29 +11,14 @@ private:
 
 public:
     Student(const std::string& fullName, int age,
-            const std::string& group, const std::string& college)
-        // Обов'язково ініціалізуємо базовий клас у списку ініціалізації.
-        : Person(fullName, age), group_(group), college_(college), averageGrade_(0.0) {}
+            const std::string& group, const std::string& college);
 
-    // Перевизначення getInfo() з ключовим словом override.
-    std::string getInfo() const override {
-        return "Student: " + getFullName()        // getFullName() з базового класу
-            + ", group: " + group_
-            + ", college: " + college_
-            + ", GPA: " + std::to_string(averageGrade_);
-    }
+    std::string getInfo() const override;
 
-    std::string getGroup() const { return group_; }
-    void setGroup(const std::string& group) { group_ = group; }
+    std::string getGroup() const;
+    void setGroup(const std::string& group);
 
-    double getAverageGrade() const { return averageGrade_; }
-
+    double getAverageGrade() const;
     // Валідація: середній бал від 2.0 до 5.0.
-    bool setAverageGrade(double grade) {
-        if (grade >= 2.0 && grade <= 5.0) {
-            averageGrade_ = grade;
-            return true;
-        }
-        return false;
-    }
+    bool setAverageGrade(double grade);
 };
