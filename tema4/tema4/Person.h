@@ -1,10 +1,9 @@
 #pragma once
 
 #include <string>
-#include <iostream>
 
-// Тема 4 (ДЗ). Абстрактний Person; getFormalGreeting() — ВІРТУАЛЬНИЙ
-// (нащадки можуть перевизначати). Деструктор друкує повідомлення.
+// Тема 4 (ДЗ). Абстрактний Person; getFormalGreeting() — ВІРТУАЛЬНИЙ.
+// Оголошення; реалізація — у Person.cpp.
 class Person {
 private:
     std::string firstName_;
@@ -15,33 +14,27 @@ protected:
     std::string gender_;
     int age_;
 
-    bool isAdult() const { return age_ >= 18; }
+    bool isAdult() const;
 
 public:
-    Person(const std::string& firstName, const std::string& midName, const std::string& lastName,
-           const std::string& gender, int age)
-        : firstName_(firstName), midName_(midName), lastName_(lastName), gender_(gender), age_(age) {}
+    Person(const std::string& firstName, const std::string& midName,
+           const std::string& lastName, const std::string& gender, int age);
 
-    std::string getFirstName() const { return firstName_; }
-    std::string getMidName()   const { return midName_; }
-    std::string getLastName()  const { return lastName_; }
-    std::string getGender()    const { return gender_; }
-    int         getAge()       const { return age_; }
+    std::string getFirstName() const;
+    std::string getMidName()   const;
+    std::string getLastName()  const;
+    std::string getGender()    const;
+    int         getAge()       const;
 
-    bool setAge(int newAge) { if (newAge >= 16 && newAge <= 100) { age_ = newAge; return true; } return false; }
-
-    std::string getFullName() const { return lastName_ + " " + firstName_ + " " + midName_; }
+    bool setAge(int newAge);
+    std::string getFullName() const;
 
     virtual std::string getRole() const = 0;
     virtual std::string getInfo() const = 0;
 
     // ДЗ4: віртуальний, щоб Teacher/Staff могли перевизначити.
-    virtual std::string getFormalGreeting() const {
-        std::string prefix = (gender_ == "Female") ? "Dear Ms. " : "Dear Mr. ";
-        return prefix + firstName_ + " " + midName_ + "!";
-    }
+    virtual std::string getFormalGreeting() const;
+    std::string getShortInfo() const;
 
-    std::string getShortInfo() const { return getFullName() + " (" + getRole() + ")"; }
-
-    virtual ~Person() { std::cout << "[~Person] " << lastName_ << " deleted." << std::endl; }
+    virtual ~Person();
 };
