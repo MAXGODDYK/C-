@@ -2,35 +2,22 @@
 
 #include <string>
 
-// Тема 2 (ДЗ). Базовий клас. Додано getRole() та getShortInfo().
+// Тема 2 (ДЗ). Базовий клас (оголошення; реалізація — у Person.cpp).
 class Person {
 private:
     std::string fullName_;
     int age_;
 
 public:
-    Person(const std::string& fullName, int age)
-        : fullName_(fullName), age_(age) {}
+    Person(const std::string& fullName, int age);
 
-    std::string getFullName() const { return fullName_; }
-    int getAge() const { return age_; }
+    std::string getFullName() const;
+    int getAge() const;
+    bool setAge(int newAge);
 
-    bool setAge(int newAge) {
-        if (newAge >= 16 && newAge <= 100) { age_ = newAge; return true; }
-        return false;
-    }
+    virtual std::string getRole() const;   // роль (перевизначається у нащадках)
+    virtual std::string getInfo() const;
+    std::string getShortInfo() const;       // ПІБ + роль
 
-    // Роль для коротких звітів (перевизначається у нащадках).
-    virtual std::string getRole() const { return "Person"; }
-
-    virtual std::string getInfo() const {
-        return "Person: " + fullName_ + ", age: " + std::to_string(age_);
-    }
-
-    // ДЗ2: коротка інформація — лише ПІБ та роль.
-    std::string getShortInfo() const {
-        return fullName_ + " (" + getRole() + ")";
-    }
-
-    virtual ~Person() = default;
+    virtual ~Person();
 };
